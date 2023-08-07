@@ -1,9 +1,8 @@
-# Sr1 temperature control system
+# SLI Temperature Plotting 
 
-`main.py` runs the control loop
-`temp_live_plotter.py` opens monitoring plot.
+`temp_live_plotter.py` opens monitoring plot which will plot the temperature locally in a Python environment.
+`web_plotter.py` will open a local [127.0.0](http://127.0.0.1:8000/) which will interactively update JS plots. 
 
-## Plotting on Yecountvoncount
 ```
 screen
 python3 /media/j/temp_control_v3/web_plotter/web_plotter.py
