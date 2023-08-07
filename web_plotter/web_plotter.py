@@ -6,6 +6,7 @@ import numpy as np
 import datetime
 import json
 import os
+from datetime import date
 
 def get_temp_avg(temp_array):
     avg = round(sum(temp_array)/len(temp_array),2)
@@ -38,6 +39,7 @@ app = Flask(__name__)
 def index():
     return render_template_string('''
         <html>
+        <title>SLI Temperature Monitor</title> 
             <head>
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
@@ -70,157 +72,147 @@ def plot():
     file_keithley_1 = os.path.join(file_path, "..", 'Logging/keithley1/'+today+'.txt')
     file_keithley_2 = os.path.join(file_path, "..", 'Logging/keithley2/'+today+'.txt')
 
-    channel_names_1 = ["nc00", "nc01", "nc02", "nc03",
-                    "nc04", "nc05", "nc06", "nc07",
-                    "nc08", "nc09", "nc10", "nc11",
-                    "nc12", "nc13", "nc14", "nc15",
-                    "nc16", "probe fiber", "blue master", "injection fiber",
-                    "nc20", "nc21", "nc22", "nc23",
-                    "nc24", "nc25", "nc26", "nc27", 
-                    "nc28", "nc29", "nc30", "nc31",
-                    "nc32", "nc33", "nc34", "nc35",
-                    "nc36", "nc37", "nc38", "nc39"]
+    channel_names_1 = ["Temp1", "Temp2", "Temp3", "Temp4", "Temp5", "Temp6",
+                       "Temp7", "Temp8"]
 
-    channel_names_2 = ["XMOT Probe Retro Window"
-    ,"XMOT Probe Retro Window"
-    ,"MOT Coil N"   
-    ,"MOT Coil S"   
-    ,"XMOT Retro Window"   
-    ,"XMOT Retro Window"    
-    ,"6 Way Cross E"  
-    ,"6 Way Cross W"   
-    ,"X MOT Probe Input Window"  
-    ,"X MOT Probe Input Window" 
-    ,"X MOT Input Window"   
-    ,"X MOT Input Window"  
-    ,"Cavity Top Window"   
-    ,"Cavity Top Window"   
-    ,"Oven Valve"   
-    ,"Chamber HEPA - Servo"        
-    ,"Laser HEPA - Servo"   
-    ,"Lattice Fiber Top"   
-    ,"PMT Andor"   
-    ,"X MOT Retro Table"   
-    ,"Repump Box"   
-    ,"6 CF Window Front Left"    
-    ,"6 CF Window Front Right"    
-    ,"6 CF Window Back Left"    
-    ,"6 CF Window Back Right"  
-    ,"X Input Table"   
-    ,"TOP PDH PD Table"  
-    ,"Absorption Fiber Middle Table"  
-    ,"No Probe XArm Input Table"
-    ,"Ion Pump"   
-    ,"Ion Pump Table"   
-    ,"813 Master"    
-    ,"Red Lasers"   
-    ,"Laser Table Partition"
-    ,'813 Transmission PD'
-    ,'Empty'
-    ,'Chamber Yoke'
-    ,'Empty'
-    ,'Empty'
-    ,'Empty']
-                    
+    #file_name = "Logging/Arduino/SLI_Temperature_Data{}.txt".format(date.today())
+    file_name = "Logging/Arduino/SLI_Temperature_Data2023-08-06.txt"             
     # function for loading data in from the temp file
-    def load_temps(path, channels):
+    def load_temps(path):
         
         # read data in, each entry is a JSON dict, so we read in a list of JSON dicts
         data_load = []
-        for line in open(path, 'r'):
-            data_load.append(json.loads(line))
-        
+        f = open(file_name)
+        data_load = json.load(f)
+        #print(data_load)
+        hourconv = 1/(60*60)
         # Extract timestamps
-        times = np.transpose([data_load[n][0] for n in range(len(data_load))])
+        times = [round(hourconv*time,2) for time in np.transpose(data_load["000"][0])]
+        #print(times)
+        #print(data_load.keys())
+        #print(times[-10:])
         
         # Extract temperatures
-        temp = np.transpose([data_load[n][1] for n in range(len(data_load))])
-        temps = {channels[entry]: temp[entry] for entry in range(40)}
-        
+        temp = [data_load[add][1] for add in data_load.keys()]
+        #print(temp)
+        temps = {add: [list(temp[0:][ind])] for ind, add in enumerate(channel_names_1)}
+       # temps = {address: 1 for address in data_load.keys() }
+        #print(temps)
+        #print(times)
         return times, temps
 
 
     # color scheme
     # Blue box
-    colors = {'Probe Fiber': 'slategrey', 'Blue Master': 'lightskyblue', 'Injection Fiber': 'steelblue'}
-    # Table: Laser side
-    colors.update({'Laser HEPA - Servo': 'red', '813 Master': 'darkred', 'Red Lasers': 'indianred',
-            'Laser Table Partition': 'orangered'})
-    # Table: Chamber side
-    colors.update({'6 Way Cross E': 'tab:blue', '6 Way Cross W': 'tab:orange', 'Oven Valve': 'tab:green', 
-                'Chamber HEPA - Servo': 'tab:red', 'Lattice Fiber Top': 'tab:purple', 'PMT Andor': 'tab:brown',
-                'X MOT Retro Table': 'tab:pink', 'X MOT Input Window': 'tab:gray', 'X Input Table': 'tab:olive',
-                'TOP PDH PD Table': 'tab:cyan', 'Absorption Fiber Middle Table': 'lightsteelblue',
-                'No Probe XArm Input Table': 'springgreen',
-                'Ion Pump': 'burlywood', 'Ion Pump Table': 'slateblue', '813 Transmission PD': 'yellowgreen'})
-    # Table: viewports
-    colors.update({'XMOT Probe Retro Window': 'lightsteelblue', 'XMOT Retro Window': 'salmon',
-                'X MOT Probe Input Window': 'steelblue',
-                'X MOT Input Window': 'firebrick',  'Cavity Top Window': 'lightgrey',
-                '6 CF Window Front Left': 'darkseagreen',
-                '6 CF Window Back Left': 'seagreen',  'Chamber Yoke': 'tab:purple'})
+    colors = {'Temp1': 'black', 'Temp2': 'darkgrey', 'Temp3': 'maroon', 'Temp4': 'sienna',
+              'Temp5': 'olive', 'Temp6': 'darkolivegreen', 'Temp7': 'springgreen', 'Temp8': 'deepskyblue'}
+
 
 
     #Load data and prep time window
-    times_1, temps_1 = load_temps(file_keithley_1, channel_names_1)
-    times_2, temps_2 = load_temps(file_keithley_2, channel_names_2)
-    use_all_data = True
+    times_1, temps_1 = load_temps(file_name)
     # use_all_data = 'no'
-    if use_all_data==True:
-        time_window=len(times_2) # uses all the data
+    if len(temps_1["Temp1"]) < 40:
+        time_window= len(temps_1["Temp1"]) # uses all the data
     else:
-        time_window = 200 # change this parameter to look at different time windows relative to the most recent point 
+        time_window = 40 # change this parameter to look at different time windows relative to the most recent point 
 
     # Main plot
     # Generate the figure **without using pyplot**.
     fig = Figure(figsize=(18, 10))
-    axes = fig.subplots(2, 3)
+    axes = fig.subplots(3, 3)
     # Blues
-    axes[0, 0].clear()
-    axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['probe fiber'][-time_window:], '.', label='Probe Fiber', color=colors['Probe Fiber'])
-    axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['blue master'][-time_window:], '.', label='Blue Master', color=colors['Blue Master'])
-    axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['injection fiber'][-time_window:], '.', label='Injection Fiber', color=colors['Injection Fiber'])
-    axes[0, 0].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title="Blue table")
+    axes[0,0].clear()
+    axes[0, 0].plot((times_1)[-time_window:], temps_1['Temp1'][-time_window:], '.', label='Temp1', color=colors['Temp1'])
     axes[0, 0].grid()
-    axes[0, 0].legend()
-
-
-    # Red and lattice laser table 
-    axes[0, 1].clear()
-    thermistors = [16,31,32,33]
-    for i in thermistors:
-        axes[0, 1].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:],
-                '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
-    axes[0, 1].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='689 and 813 table')
-    axes[0, 1].legend()
+    axes[0,0].set_ylim([0,25])
+    axes[0, 0].legend(loc = "upper right", frameon=False)
+    
+    
+    axes[0, 1].plot((times_1)[-time_window:], temps_1['Temp2'][-time_window:], '.', label='Temp2', color=colors['Temp2'])
     axes[0, 1].grid()
-
-    # Main chamber
-    thermistors = [6,7,14,15,17,18,19,10,25,26,27,28,29,30,34]#15#,31,32,33]
-    axes[0, 2].clear()
-    for i in thermistors:
-        axes[0, 2].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
-    axes[0, 2].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='Main chamber')
-    axes[0, 2].legend(fontsize="small", ncol=3)
+    axes[0, 1].legend()
+    
+    
+    axes[0, 2].plot((times_1)[-time_window:], temps_1['Temp3'][-time_window:], '.', label='Temp3', color=colors['Temp3'])
     axes[0, 2].grid()
-
-    #  View ports 
-    axes[1, 0].clear()
-    thermistors = [0,5,8,10,12,21,23,36]
-    for i in thermistors:
-        axes[1, 0].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
-    axes[1, 0].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='Chamber viewports')
+    axes[0, 2].legend()
+    
+    
+    axes[1, 0].plot((times_1)[-time_window:], temps_1['Temp4'][-time_window:], '.', label='Temp4', color=colors['Temp4'])
     axes[1, 0].grid()
     axes[1, 0].legend()
-
-    # MOT coils
+    
+    
     axes[1, 1].clear()
-    thermistors = [2,3]
-    for i in thermistors:
-        axes[1, 1].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i])
-    axes[1, 1].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='MOT coils')
+    axes[1, 1].plot((times_1)[-time_window:], temps_1['Temp5'][-time_window:], '.', label='Temp5', color=colors['Temp5'])
     axes[1, 1].grid()
     axes[1, 1].legend()
+    
+    
+    axes[1, 2].clear()
+    axes[1, 2].plot((times_1)[-time_window:], temps_1['Temp6'][-time_window:], '.', label='Temp6', color=colors['Temp6'])
+    axes[1, 2].grid()
+    axes[1, 2].legend()
+    
+    
+    
+    axes[2, 0].clear()
+    axes[2, 0].plot((times_1)[-time_window:], temps_1['Temp7'][-time_window:], '.', label='Temp7', color=colors['Temp7'])
+    axes[2, 0].grid()
+    axes[2, 0].legend()
+    
+    
+    
+    axes[2, 1].clear()
+    axes[2, 1].plot((times_1)[-time_window:], temps_1['Temp8'][-time_window:], '.', label='Temp8', color=colors['Temp8'])
+    axes[2, 1].grid()
+    axes[2, 1].legend()
+    
+    
+    # axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['blue master'][-time_window:], '.', label='Blue Master', color=colors['Blue Master'])
+    # axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['injection fiber'][-time_window:], '.', label='Injection Fiber', color=colors['Injection Fiber'])
+    # axes[0, 0].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title="Blue table")
+    # axes[0, 0].grid()
+    # axes[0, 0].legend()
+
+
+    # # Red and lattice laser table 
+    # axes[0, 1].clear()
+    # thermistors = [16,31,32,33]
+    # for i in thermistors:
+    #     axes[0, 1].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:],
+    #             '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
+    # axes[0, 1].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='689 and 813 table')
+    # axes[0, 1].legend()
+    # axes[0, 1].grid()
+
+    # # Main chamber
+    # thermistors = [6,7,14,15,17,18,19,10,25,26,27,28,29,30,34]#15#,31,32,33]
+    # axes[0, 2].clear()
+    # for i in thermistors:
+    #     axes[0, 2].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
+    # axes[0, 2].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='Main chamber')
+    # axes[0, 2].legend(fontsize="small", ncol=3)
+    # axes[0, 2].grid()
+
+    # #  View ports 
+    # axes[1, 0].clear()
+    # thermistors = [0,5,8,10,12,21,23,36]
+    # for i in thermistors:
+    #     axes[1, 0].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i], color=colors[channel_names_2[i]])
+    # axes[1, 0].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='Chamber viewports')
+    # axes[1, 0].grid()
+    # axes[1, 0].legend()
+
+    # # MOT coils
+    # axes[1, 1].clear()
+    # thermistors = [2,3]
+    # for i in thermistors:
+    #     axes[1, 1].plot((times_2 - times_2[0])[-time_window:]*24., temps_2[channel_names_2[i]][-time_window:], '.', label=channel_names_2[i])
+    # axes[1, 1].set(ylabel='Temperature (C)', xlabel='Time (Hours)', title='MOT coils')
+    # axes[1, 1].grid()
+    # axes[1, 1].legend()
 
     # Notes 
     axes[-1, -1].clear()
