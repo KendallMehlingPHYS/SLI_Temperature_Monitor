@@ -13,7 +13,7 @@ def get_temp_avg(temp_array):
     return(avg)
     
 def get_temp_std(temp_array):
-    std = round(np.std(temp_array),1)
+    std = round(np.std(temp_array, dtype=np.float64),1)
     return(std)
 
 # Data part
@@ -53,7 +53,7 @@ def index():
                                     $('#plot').attr('src', 'data:image/png;base64,' + data);
                                 }
                             });
-                        }, 5000);
+                        }, 10000);
                     });
                 </script>
             </head>
@@ -120,56 +120,56 @@ def plot():
         time_window = 100 # change this parameter to look at different time windows relative to the most recent point 
 
     mintemp = 0
-    maxtemp = 10
+    maxtemp = 100
     # Main plot
     # Generate the figure **without using pyplot**.
     fig = Figure(figsize=(16, 8))
     axes = fig.subplots(3, 3)
     # Blues
-    axes[0, 0].plot((times_1)[-time_window:], temps_1['Temp1'][-time_window:], '.', label='Temp1 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp1'][-time_window:]),get_temp_std(temps_1['Temp1'][-time_window:])), color=colors['Temp1'])
+    axes[0, 0].plot((times_1)[-time_window:], temps_1['Temp1'][-time_window:], '.', label='Temp1 Avg: {}'.format(get_temp_avg(temps_1['Temp1'][-time_window:])), color=colors['Temp1'])
     axes[0, 0].grid()
     axes[0, 0].set_ylim([mintemp, maxtemp])
     axes[0, 0].legend(loc = "upper right", frameon=False)
     
     
-    axes[0, 1].plot((times_1)[-time_window:], temps_1['Temp2'][-time_window:], '.', label='Temp2 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp2'][-time_window:]),get_temp_std(temps_1['Temp2'][-time_window:])), color=colors['Temp2'])
+    axes[0, 1].plot((times_1)[-time_window:], temps_1['Temp2'][-time_window:], '.', label='Temp2 Avg: {}'.format(get_temp_avg(temps_1['Temp2'][-time_window:])), color=colors['Temp2'])
     axes[0, 1].grid()
     axes[0, 1].set_ylim([mintemp, maxtemp])
     axes[0, 1].legend(loc = "upper right", frameon=False)
     
     
-    axes[0, 2].plot((times_1)[-time_window:], temps_1['Temp3'][-time_window:], '.', label='Temp3 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp3'][-time_window:]),get_temp_std(temps_1['Temp3'][-time_window:])), color=colors['Temp3'])
+    axes[0, 2].plot((times_1)[-time_window:], temps_1['Temp3'][-time_window:], '.', label='Temp3 Avg: {}'.format(get_temp_avg(temps_1['Temp3'][-time_window:])), color=colors['Temp3'])
     axes[0, 2].grid()
     axes[0, 2].set_ylim([mintemp, maxtemp])
     axes[0, 2].legend(loc = "upper right", frameon=False)
     
     
-    axes[1, 0].plot((times_1)[-time_window:], temps_1['Temp4'][-time_window:], '.', label='Temp4 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp4'][-time_window:]),get_temp_std(temps_1['Temp4'][-time_window:])), color=colors['Temp4'])
+    axes[1, 0].plot((times_1)[-time_window:], temps_1['Temp4'][-time_window:], '.', label='Temp4 Avg: {}'.format(get_temp_avg(temps_1['Temp4'][-time_window:])), color=colors['Temp4'])
     axes[1, 0].grid()
     axes[1, 0].set_ylim([mintemp, maxtemp])
     axes[1, 0].legend(loc = "upper right", frameon=False)
     
 
-    axes[1, 1].plot((times_1)[-time_window:], temps_1['Temp5'][-time_window:], '.', label='Temp5 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp5'][-time_window:]),get_temp_std(temps_1['Temp5'][-time_window:])), color=colors['Temp5'])
+    axes[1, 1].plot((times_1)[-time_window:], temps_1['Temp5'][-time_window:], '.', label='Temp5 Avg: {}'.format(get_temp_avg(temps_1['Temp5'][-time_window:])), color=colors['Temp5'])
     axes[1, 1].grid()
     axes[1, 1].set_ylim([mintemp, maxtemp])
     axes[1, 1].legend(loc = "upper right", frameon=False)
     
 
-    axes[1, 2].plot((times_1)[-time_window:], temps_1['Temp6'][-time_window:], '.', label='Temp6 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp6'][-time_window:]),get_temp_std(temps_1['Temp6'][-time_window:])), color=colors['Temp6'])
+    axes[1, 2].plot((times_1)[-time_window:], temps_1['Temp6'][-time_window:], '.', label='Temp6 Avg: {}'.format(get_temp_avg(temps_1['Temp6'][-time_window:])), color=colors['Temp6'])
     axes[1, 2].grid()
     axes[1, 2].set_ylim([mintemp, maxtemp])
     axes[1, 2].legend(loc = "upper right", frameon=False)
     
     
     
-    axes[2, 0].plot((times_1)[-time_window:], temps_1['Temp7'][-time_window:], '.', label='Temp7 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp7'][-time_window:]),get_temp_std(temps_1['Temp7'][-time_window:])), color=colors['Temp7'])
+    axes[2, 0].plot((times_1)[-time_window:], temps_1['Temp7'][-time_window:], '.', label='Temp7 Avg: {}'.format(get_temp_avg(temps_1['Temp7'][-time_window:])), color=colors['Temp7'])
     axes[2, 0].grid()
     axes[2, 0].set_ylim([mintemp, maxtemp])
     axes[2, 0].legend(loc = "upper right", frameon=False)
     
     
-    axes[2, 1].plot((times_1)[-time_window:], temps_1['Temp8'][-time_window:], '.', label='Temp8 Avg: {} \n STD: {}'.format(get_temp_avg(temps_1['Temp8'][-time_window:]),get_temp_std(temps_1['Temp8'][-time_window:])), color=colors['Temp8'])
+    axes[2, 1].plot((times_1)[-time_window:], temps_1['Temp8'][-time_window:], '.', label='Temp8 Avg: {}'.format(get_temp_avg(temps_1['Temp8'][-time_window:])), color=colors['Temp8'])
     axes[2, 1].grid()
     axes[2, 1].set_ylim([mintemp, maxtemp])
     axes[2, 1].legend(loc = "upper right", frameon=False)
