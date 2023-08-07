@@ -7,6 +7,14 @@ import datetime
 import json
 import os
 
+def get_temp_avg(temp_array):
+    avg = round(sum(temp_array)/len(temp_array),2)
+    return(avg)
+    
+def get_temp_std(temp_array):
+    std = np.std(temp_array)
+    return(std)
+
 # Data part
 ## Formating date
 datetime_fmt = '%Y.%m.%d'
