@@ -107,26 +107,13 @@ def update_figure():
     colors.update({'Temp4': 'red', 'Temp5': 'darkred', 'Temp6': 'indianred',
             'Temp7': 'orangered'})
     # Table: Chamber side
-    colors.update({'Temp8': 'tab:blue', '6 Way Cross W': 'tab:orange', 'Oven Valve': 'tab:green', 
-                'Chamber HEPA - Servo': 'tab:red', 'Lattice Fiber Top': 'tab:purple', 'PMT Andor': 'tab:brown',
-                'X MOT Retro Table': 'tab:pink', 'X MOT Input Window': 'tab:gray', 'X Input Table': 'tab:olive',
-                'TOP PDH PD Table': 'tab:cyan', 'Absorption Fiber Middle Table': 'lightsteelblue',
-                'No Probe XArm Input Table': 'springgreen',
-                'Ion Pump': 'burlywood', 'Ion Pump Table': 'slateblue', '813 Transmission PD': 'yellowgreen'})
+    colors.update({'Temp8': 'tab:blue'})
     # Table: viewports
-    colors.update({'XMOT Probe Retro Window': 'lightsteelblue', 'XMOT Retro Window': 'salmon',
-                'X MOT Probe Input Window': 'steelblue',
-                'X MOT Input Window': 'firebrick',  'Cavity Top Window': 'lightgrey',
-                '6 CF Window Front Left': 'darkseagreen',
-                '6 CF Window Back Left': 'seagreen',  'Chamber Yoke': 'tab:purple'})
 
 
     #Load data and prep time window
     times_1, temps_1 = load_temps(channel_names_1, file_path)
-    #print(len(times_1))
-    #print(temps_1)
-    #print(temps_1["nc16"])
-    #times_2, temps_2 = load_temps(channel_names_1)
+    
     #use_all_data = True
     # use_all_data = 'no'
     #if use_all_data==True:
@@ -142,20 +129,20 @@ def update_figure():
     axes[0, 0].plot((times_1 - times_1[0])[-time_window:]*24, temps_1['Temp1'][-time_window:], '.', label="Temp1", color=colors['Temp1'])
     axes[0, 0].set(ylabel='Temperature (C)', xlabel='Time (Seconds)', title="Optical Enclosure")
     axes[0,0].set_ylim([0,25])
-    # axes[0, 0].grid()
+    axes[0, 0].grid()
     # axes[0, 0].legend()
     
     
     axes[0, 1].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['Temp2'][-time_window:], '.', label='Temp2', color=colors['Temp2'])
     axes[0, 1].set(ylabel='Temperature (C)', xlabel='Time (Seconds)', title="Optical Enclosure")
     axes[0,1].set_ylim([0,25])
-    #axes[0, 1].grid()
+    axes[0, 1].grid()
     #axes[0, 1].legend()
     
     axes[1, 0].plot((times_1 - times_1[0])[-time_window:]*24., temps_1['Temp3'][-time_window:], '.', label='Temp3', color=colors['Temp3'])
     axes[1, 0].set(ylabel='Temperature (C)', xlabel='Time (Seconds)', title="Optical Enclosure")
     axes[1,0].set_ylim([0,25])
-    #axes[1, 0].grid()
+    axes[1, 0].grid()
     #axes[1, 0].legend()
 
 
@@ -211,7 +198,7 @@ def update_figure():
     #plt.pause(0.1)
 
 # animate
-fig, axes = plt.subplots(2,2, figsize=(20, 12))
+fig, axes = plt.subplots(3,2, figsize=(20, 12))
 
 
 #update_figure()
