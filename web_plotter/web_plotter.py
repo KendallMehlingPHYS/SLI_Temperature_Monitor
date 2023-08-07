@@ -75,7 +75,7 @@ def plot():
     channel_names_1 = ["Temp1", "Temp2", "Temp3", "Temp4", "Temp5", "Temp6",
                        "Temp7", "Temp8"]
 
-    file_name = "Logging/Arduino/SLI_Temperature_Data{}.txt".format(date.today())
+    file_name = "Logging/Arduino/Temperature_Data/SLI_Temperature_Data{}.txt".format(date.today())
     #file_name = "Logging/Arduino/SLI_Temperature_Data2023-08-03.txt"             
     # function for loading data in from the temp file
     def load_temps(path):
